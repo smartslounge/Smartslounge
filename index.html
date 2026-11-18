@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en" class="light scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smarts Lounge | Drinks & Entertainment</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            green: '#06C167',
+                            darkGreen: '#059E54',
+                            lightGreen: '#E6F9F0',
+                            black: '#000000',
+                            grayBg: '#F6F6F6',
+                            cardBg: '#FFFFFF',
+                            textDark: '#000000',
+                            textMuted: '#5E5E5E',
+                            border: '#EEEEEE',
+                            lightGray: '#F3F3F3'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #FFFFFF;
+            color: #000000;
+            overflow-x: hidden;
+            touch-action: pan-x pan-y;
+            -webkit-text-size-adjust: 100%;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F6F6F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06C167;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-theme-green selection:text-white pb-24">
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="cart-toast" class="fixed top-24 right-4 z-50 bg-black text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-theme-border flex items-center gap-4 transition-all duration-300 transform translate-y-[-200%] opacity-0">
+        <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-circle-check text-theme-green text-lg"></i>
+            <div>
+                <p class="text-xs font-bold text-white" id="toast-msg">Added to cart successfully!</p>
+                <p class="text-[10px] text-gray-400">Review your order or continue browsing.</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 border-l border-gray-700 pl-4">
+            <button onclick="toggleCartModal(true); hideToast();" class="px-3 py-1.5 bg-theme-green text-black font-extrabold text-xs rounded-xl hover:bg-theme-darkGreen hover:text-white transition-all">Review</button>
+            <button onclick="hideToast()" class="px-3 py-1.5 bg-gray-800 text-white font-bold text-xs rounded-xl hover:bg-gray-700 transition-all">Continue</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM MESSAGE BOX (REPLACES ALERT) -->
+    <div id="message-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity duration-200 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-theme-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-theme-lightGreen text-theme-darkGreen flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <h3 class="font-black text-base text-black">Notice</h3>
+            </div>
+            <p id="message-modal-text" class="text-xs text-theme-textMuted leading-relaxed"></p>
+            <button onclick="hideMessageModal()" class="w-full py-2.5 rounded-xl bg-black text-white font-bold text-xs hover:bg-theme-green hover:text-black transition-all">OK</button>
+        </div>
+    </div>
+
+    <!-- TOP STICKY HEADER -->
+    <header class="sticky top-0 z-40 bg-white border-b border-theme-border shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-3">
+                
+                <!-- Brand Name: Smarts Lounge -->
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="scrollToTop()">
+                    <div class="flex items-center gap-1.5 font-black text-xl sm:text-2xl tracking-tighter">
+                        <span class="text-black">Smarts</span>
+                    </div>
+                    <div class="h-6 w-px bg-theme-border hidden sm:block"></div>
+                    <div class="hidden sm:flex flex-col">
+                        <span class="text-xs font-bold text-black flex items-center gap-1">
+                            Smarts Lounge <i class="fa-solid fa-circle-check text-theme-green text-[10px]"></i>
+                        </span>
+                        <span class="text-[11px] text-theme-textMuted">Ilinge Township • Cold Drinks & Vibes</span>
+                    </div>
+                </div>
+
+                <!-- Non-interactive Delivery & Pickup Info -->
+                <div class="hidden lg:flex items-center bg-theme-grayBg px-4 py-2 rounded-full border border-theme-border text-xs font-bold text-black gap-3 select-none">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-truck text-theme-green"></i> Delivery</span>
+                    <span class="text-gray-300">|</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-person-walking text-theme-green"></i> Pickup (Free)</span>
+                </div>
+
+                <!-- Live Search & Checkout Button -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-grow sm:flex-grow-0 justify-end">
+                    <div class="relative w-full max-w-[180px] sm:max-w-[220px] lg:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-theme-textMuted text-xs"></i>
+                        <input type="text" id="menu-search-input" onkeyup="handleMenuSearch()" placeholder="Search menu..." class="w-full bg-theme-grayBg border border-transparent focus:border-black rounded-full pl-9 pr-4 py-2 text-xs font-medium text-black focus:outline-none transition-all">
+                    </div>
+
+                    <button onclick="toggleCartModal(true)" class="relative bg-black hover:bg-theme-darkGreen text-white px-3.5 sm:px-4 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 shadow-md shrink-0">
+                        <i class="fa-solid fa-basket-shopping text-sm text-theme-green"></i>
+                        <span class="hidden sm:inline">Checkout</span>
+                        <span id="cart-badge-count" class="bg-theme-green text-black text-[11px] font-black rounded-full h-5 px-1.5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- STORE HERO BANNER -->
+    <section class="bg-white border-b border-theme-border">
+        <div class="h-52 sm:h-72 lg:h-80 w-full bg-slate-900 relative overflow-hidden">
+            <img src="Smarts's Suggest logo.png" alt="Smarts Lounge Logo" class="w-full h-full object-contain sm:object-cover" onerror="this.src='https://placehold.co/1200x400/000000/06C167?text=Smarts+Lounge'">
+            <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/75 to-transparent pointer-events-none"></div>
+            
+            <div class="absolute bottom-3 left-4 right-4 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 text-white flex justify-between items-end pointer-events-none">
+                <div>
+                    <h1 class="text-base sm:text-xl font-black tracking-tight">Smarts Lounge</h1>
+                    <p class="text-[11px] sm:text-xs text-gray-200">Ice Cold Beers, Ciders, Spirits, Wine & Pool</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
+                <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-theme-textDark">
+                    <div class="flex items-center gap-1.5 bg-theme-lightGreen px-2.5 py-1 rounded-full text-theme-darkGreen font-extrabold">
+                        <i class="fa-solid fa-star text-xs"></i> 4.8 <span class="text-theme-textMuted font-normal text-[11px]">(200+ ratings)</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-theme-textMuted">
+                        <i class="fa-regular fa-clock text-black"></i> Open: <strong class="text-black">11:00 AM – Late</strong>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-theme-textMuted">
+                        <i class="fa-solid fa-location-dot text-theme-green"></i> Main Road, Ilinge Township
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="https://www.google.com/maps/search/?api=1&query=-31.979699175142,27.050766135078" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-full border border-theme-border bg-theme-grayBg hover:bg-black hover:text-white transition-all text-[11px] font-bold text-black flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot text-theme-green"></i> Google Maps
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=100054418002875" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-full border border-theme-border bg-theme-grayBg hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all text-[11px] font-bold text-black flex items-center gap-1.5">
+                        <i class="fa-brands fa-facebook text-[#1877F2] group-hover:text-white"></i> Facebook
+                    </a>
+                    <button onclick="toggleContactModal(true)" class="px-3.5 py-1.5 rounded-full border border-theme-border bg-theme-grayBg hover:bg-black hover:text-white transition-all text-[11px] font-bold text-black flex items-center gap-1.5">
+                        <i class="fa-solid fa-phone text-theme-green"></i> Lounge Contacts
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY NAV RIBBON -->
+    <div class="bg-white border-b border-theme-border py-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 overflow-x-auto hide-scrollbar text-xs font-bold">
+                <a href="#cat-ciders" class="cat-pill bg-black text-white px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-bottle-droplet text-theme-green"></i> Ciders (6-Packs)
+                </a>
+                <a href="#cat-spirits" class="cat-pill bg-theme-grayBg hover:bg-theme-lightGray text-black px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-whiskey-glass text-theme-green"></i> Shots & Spirits
+                </a>
+                <a href="#cat-beers" class="cat-pill bg-theme-grayBg hover:bg-theme-lightGray text-black px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-beer-mug-empty text-theme-green"></i> Beers & Quarts
+                </a>
+                <a href="#cat-wine" class="cat-pill bg-theme-grayBg hover:bg-theme-lightGray text-black px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-wine-glass text-theme-green"></i> Wine & Extras
+                </a>
+                <a href="#cat-pool" class="cat-pill bg-theme-lightGreen text-theme-darkGreen border border-theme-green/30 px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy text-theme-darkGreen"></i> This Week's Announcement
+                </a>
+                <a href="#cat-gallery" class="cat-pill bg-theme-grayBg hover:bg-theme-lightGray text-black px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-camera text-theme-green"></i> Gallery
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN MENU CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-12 w-full">
+
+        <!-- CATEGORY 1: CIDERS (6-PACKS) -->
+        <section id="cat-ciders" class="scroll-mt-24">
+            <div class="border-b border-theme-border pb-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                    <i class="fa-solid fa-bottle-droplet text-theme-green"></i> Ciders (6-Packs)
+                </h2>
+                <p class="text-xs text-theme-textMuted mt-0.5">Chilled 6-packs ready for instant delivery.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="ciders-container"></div>
+        </section>
+
+        <!-- CATEGORY 2: SHOTS & SPIRITS -->
+        <section id="cat-spirits" class="scroll-mt-24">
+            <div class="border-b border-theme-border pb-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                    <i class="fa-solid fa-whiskey-glass text-theme-green"></i> Shots & Spirits
+                </h2>
+                <p class="text-xs text-theme-textMuted mt-0.5">Premium spirit bottles & cognac.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="spirits-container"></div>
+        </section>
+
+        <!-- CATEGORY 3: BEERS & QUARTS -->
+        <section id="cat-beers" class="scroll-mt-24">
+            <div class="border-b border-theme-border pb-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                    <i class="fa-solid fa-beer-mug-empty text-theme-green"></i> Beers & Quarts (750ml)
+                </h2>
+                <p class="text-xs text-theme-textMuted mt-0.5">Cold 6-packs and single 750ml quarts.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="beers-container"></div>
+        </section>
+
+        <!-- CATEGORY 4: WINE & EXTRAS -->
+        <section id="cat-wine" class="scroll-mt-24">
+            <div class="border-b border-theme-border pb-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                    <i class="fa-solid fa-wine-glass text-theme-green"></i> Boxed Wine & Ice Packs
+                </h2>
+                <p class="text-xs text-theme-textMuted mt-0.5">Wines and 2kg ice bags.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="wine-container"></div>
+        </section>
+
+        <!-- CATEGORY 5: POOL TOURNAMENT / THIS WEEK ANNOUNCEMENT -->
+        <section id="cat-pool" class="scroll-mt-24 bg-theme-grayBg rounded-3xl p-6 sm:p-10 border border-theme-border relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 opacity-5 text-black text-9xl pointer-events-none">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <div class="max-w-3xl space-y-6">
+                <div>
+                    <span class="bg-theme-green text-black text-xs font-black uppercase px-3 py-1 rounded-full">This Week's Announcement</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-black mt-2">Smarts Lounge Knockout Pool Tournament</h2>
+                    <p class="text-xs sm:text-sm text-theme-textMuted mt-1">
+                        Grand Prize <strong class="text-black font-extrabold">R2000</strong>! Join us this week for competitive matches, good music, and ice cold drinks.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-theme-border shadow-xs space-y-4">
+                    <h3 class="font-extrabold text-base text-black flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-theme-green"></i> Tournament Information
+                    </h3>
+                    <p class="text-xs text-theme-textMuted leading-relaxed">
+                        Slots are open for this week's pool tournament. Contact <strong class="text-black font-bold">Dj Chadder</strong> for more details and registration.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <a href="https://wa.me/27734356789?text=Hi%20Dj%20Chadder,%20I%20would%20like%20more%20details%20about%20this%20week's%20Pool%20Tournament%20at%20Smarts%20Lounge%20(Grand%20Prize%20R2000)." target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-xl bg-black text-white hover:bg-theme-green hover:text-black font-black text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-base text-theme-green"></i> Contact Dj Chadder (073 435 6789)
+                        </a>
+                        <a href="tel:0734356789" class="px-4 py-3 rounded-xl bg-theme-grayBg text-black hover:bg-black hover:text-white border border-theme-border font-bold text-xs transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-theme-green"></i> Call Dj Chadder
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORY 6: GALLERY SECTION (1.jpg to 6.jpg) -->
+        <section id="cat-gallery" class="scroll-mt-24">
+            <div class="border-b border-theme-border pb-3 mb-6">
+                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                    <i class="fa-solid fa-camera text-theme-green"></i> Lounge Gallery
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="1.jpg" alt="Gallery 1" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=1.jpg'">
+                </div>
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="2.jpg" alt="Gallery 2" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=2.jpg'">
+                </div>
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="3.jpg" alt="Gallery 3" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=3.jpg'">
+                </div>
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="4.jpg" alt="Gallery 4" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=4.jpg'">
+                </div>
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="5.jpg" alt="Gallery 5" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=5.jpg'">
+                </div>
+                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
+                    <img src="6.jpg" alt="Gallery 6" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=6.jpg'">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER RIBBON -->
+    <footer class="bg-black text-white py-10 border-t border-theme-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-gray-400">
+            <div class="flex items-center gap-3">
+                <span class="text-lg font-black text-white tracking-tight">Smarts Lounge</span>
+                <a href="https://www.facebook.com/profile.php?id=100054418002875" target="_blank" rel="noopener noreferrer" class="text-theme-green hover:underline font-bold flex items-center gap-1">
+                    <i class="fa-brands fa-facebook"></i> Facebook Page
+                </a>
+            </div>
+            <p class="text-center">Main Road, Ilinge Township | WhatsApp Orders: <strong class="text-white">082 366 6451</strong></p>
+            <p>&copy; <span id="footer-year"></span> Smarts Lounge. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ALWAYS-ON-SCREEN STICKY CHECKOUT BAR (MOBILE & DESKTOP) -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-theme-border p-3 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div class="hidden sm:flex items-center gap-3 text-xs">
+                <span class="font-black text-black">Smarts Lounge Order</span>
+                <span class="text-gray-300">|</span>
+                <span class="text-theme-textMuted">Tap to review items & generate WhatsApp slip</span>
+            </div>
+            <button onclick="toggleCartModal(true)" class="w-full sm:w-auto sm:min-w-[320px] py-3.5 rounded-xl bg-black hover:bg-theme-darkGreen text-white font-extrabold text-xs flex items-center justify-between px-5 shadow-lg transition-all">
+                <div class="flex items-center gap-2">
+                    <span id="mob-cart-badge" class="bg-theme-green text-black text-[11px] font-black rounded-full h-5 px-2 flex items-center justify-center">0</span>
+                    <span>View Order & Checkout</span>
+                </div>
+                <span id="mob-cart-total" class="text-theme-green font-black text-sm">R0.00</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex justify-end transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="w-full max-w-lg bg-white h-full flex flex-col shadow-2xl border-l border-theme-border overflow-hidden">
+            <div class="p-5 border-b border-theme-border flex items-center justify-between bg-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-theme-lightGreen text-theme-darkGreen flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-black text-base">Order Review & Checkout</h3>
+                        <p class="text-xs text-theme-textMuted">Smarts Lounge WhatsApp Slip Generator</p>
+                    </div>
+                </div>
+                <button onclick="toggleCartModal(false)" class="w-8 h-8 rounded-full bg-theme-grayBg text-black hover:bg-black hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="flex-grow overflow-y-auto p-5 space-y-6">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-theme-textMuted">1. Itemized Order Details</h4>
+                        <span id="cart-review-count" class="text-xs font-extrabold text-black">0 items</span>
+                    </div>
+                    <div id="cart-items-list" class="space-y-3"></div>
+                </div>
+
+                <div class="pt-4 border-t border-theme-border space-y-3">
+                    <h4 class="text-xs font-black uppercase tracking-wider text-theme-textMuted">2. Fulfillment & Delivery Details</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="modal-opt-pickup" onclick="setModalOrderType('Pickup')" class="py-2.5 px-3 rounded-xl border border-theme-border bg-theme-grayBg text-black text-xs font-bold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-person-walking"></i> Pickup (Free)
+                        </button>
+                        <button type="button" id="modal-opt-delivery" onclick="setModalOrderType('Delivery')" class="py-2.5 px-3 rounded-xl border border-theme-border bg-theme-grayBg text-black text-xs font-bold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-truck"></i> Delivery
+                        </button>
+                    </div>
+
+                    <div id="delivery-fields-container" class="hidden space-y-3 pt-2 bg-theme-grayBg p-4 rounded-2xl border border-theme-border">
+                        <div>
+                            <label class="block text-xs font-bold text-black mb-1">Select Delivery Area *</label>
+                            <select id="delivery-area-select" onchange="updateCartTotals()" class="w-full bg-white border border-theme-border rounded-xl px-3 py-2 text-xs font-bold text-black focus:outline-none focus:border-black">
+                                <option value="" data-fee="0">-- Select Area --</option>
+                                <option value="Fourrooms" data-fee="20">Fourrooms (R20 fee)</option>
+                                <option value="Jamestown" data-fee="20">Jamestown (R20 fee)</option>
+                                <option value="Cookhouse" data-fee="20">Cookhouse (R20 fee)</option>
+                                <option value="Zwide" data-fee="20">Zwide (R20 fee)</option>
+                                <option value="Vergonoeg" data-fee="30">Vergonoeg (R30 fee)</option>
+                                <option value="Kapa" data-fee="35">Kapa (R35 fee)</option>
+                                <option value="Maplangeni" data-fee="30">Maplangeni (R30 fee)</option>
+                                <option value="Tinarha" data-fee="35">Tinarha (R35 fee)</option>
+                                <option value="Mzamo" data-fee="30">Mzamo (R30 fee)</option>
+                                <option value="eZitandini" data-fee="30">eZitandini (R30 fee)</option>
+                                <option value="Site (magcwabeni)" data-fee="30">Site magcwabeni (R30 fee)</option>
+                                <option value="Site (Mgwevu)" data-fee="35">Site Mgwevu (R35 fee)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-black mb-1">Street Address & House No. *</label>
+                            <input type="text" id="cust-address" placeholder="e.g. Main Road, Ilinge Township" class="w-full bg-white border border-theme-border rounded-xl px-3 py-2 text-xs font-medium text-black focus:outline-none focus:border-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-black mb-1">Delivery Time Slot *</label>
+                            <select id="delivery-time-select" onchange="updateCartTotals()" class="w-full bg-white border border-theme-border rounded-xl px-3 py-2 text-xs font-bold text-black focus:outline-none focus:border-black">
+                                <option value="11:00-12:00">11:00 - 12:00 Slot</option>
+                                <option value="14:00-15:00">14:00 - 15:00 Slot</option>
+                                <option value="17:00-18:00">17:00 - 18:00 Slot</option>
+                                <option value="20:00-23:00 (Late Night)">Late Night Delivery (20:00 - 23:00) (+R50 Fee)</option>
+                            </select>
+                            <p id="late-night-warning" class="text-[11px] font-semibold text-amber-600 mt-1 hidden">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Late Night Delivery (R50 fee) is restricted to areas with standard fees of R20-R30.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-theme-border space-y-3">
+                    <h4 class="text-xs font-black uppercase tracking-wider text-theme-textMuted">3. Contact & Payment Option</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-black mb-1">Your Full Name *</label>
+                            <input type="text" id="cust-name" placeholder="e.g. Sipho M." class="w-full bg-theme-grayBg border border-theme-border rounded-xl px-3 py-2 text-xs font-medium text-black focus:outline-none focus:border-black">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-black mb-1">WhatsApp Phone Number *</label>
+                            <input type="tel" id="cust-phone" placeholder="e.g. 072 911 6502" class="w-full bg-theme-grayBg border border-theme-border rounded-xl px-3 py-2 text-xs font-medium text-black focus:outline-none focus:border-black">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <label class="flex items-center justify-center p-2.5 rounded-xl border border-theme-border bg-theme-grayBg cursor-pointer text-xs font-bold text-black">
+                            <input type="radio" name="pay_method" value="Cash" checked onchange="toggleEftNotice(false)" class="accent-black mr-2"> Cash Payment
+                        </label>
+                        <label class="flex items-center justify-center p-2.5 rounded-xl border border-theme-border bg-theme-grayBg cursor-pointer text-xs font-bold text-black">
+                            <input type="radio" name="pay_method" value="EFT" onchange="toggleEftNotice(true)" class="accent-black mr-2"> EFT Transfer
+                        </label>
+                    </div>
+
+                    <div id="eft-disclaimer-box" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1">
+                        <p class="font-extrabold flex items-center gap-1.5 text-amber-800">
+                            <i class="fa-solid fa-shield-halved"></i> EFT Disclaimer Notice:
+                        </p>
+                        <p class="text-[11px] leading-relaxed">
+                            Immediate payment is required. Please present or send Proof of Payment (POP) via WhatsApp to 0823666451 prior to order dispatch.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-5 border-t border-theme-border bg-theme-grayBg space-y-3">
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between text-theme-textMuted">
+                        <span>Items Subtotal</span>
+                        <span id="summary-subtotal" class="font-bold text-black">R0.00</span>
+                    </div>
+                    <div class="flex justify-between text-theme-textMuted">
+                        <span>Delivery Fee</span>
+                        <span id="summary-delivery" class="font-bold text-black">R0.00</span>
+                    </div>
+                    <div class="flex justify-between text-base font-black text-black pt-2 border-t border-theme-border">
+                        <span>Total Due</span>
+                        <span id="summary-total" class="text-theme-darkGreen">R0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="submitOrderToWhatsApp()" class="w-full py-4 rounded-xl bg-theme-green hover:bg-theme-darkGreen text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Generate & Send Slip via WhatsApp
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LOUNGE CONTACT MODAL -->
+    <div id="contact-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl relative">
+            <button onclick="toggleContactModal(false)" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-theme-grayBg text-black flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-theme-lightGreen text-theme-darkGreen flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-lg text-black">Smarts Lounge Contacts</h3>
+                    <p class="text-xs text-theme-textMuted">Main Road, Ilinge Township</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs border-t border-b border-theme-border py-4">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-theme-grayBg">
+                    <div>
+                        <p class="font-extrabold text-black">Sis Nomami</p>
+                        <p class="text-theme-textMuted text-[11px]">Lounge Contact</p>
+                    </div>
+                    <span class="px-3 py-1.5 bg-gray-200 text-theme-textMuted font-bold rounded-lg text-[11px]">Coming soon</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-theme-grayBg">
+                    <div>
+                        <p class="font-extrabold text-black">Dj Chadder</p>
+                        <p class="text-theme-textMuted text-[11px]">Lounge & Events</p>
+                    </div>
+                    <span class="px-3 py-1.5 bg-gray-200 text-theme-textMuted font-bold rounded-lg text-[11px]">Coming soon</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <a href="https://www.google.com/maps/search/?api=1&query=-31.979699175142,27.050766135078" target="_blank" rel="noopener noreferrer" class="py-3 rounded-xl bg-black text-white font-bold text-xs flex items-center justify-center gap-2 text-center">
+                    <i class="fa-solid fa-map-pin text-theme-green"></i> Google Maps
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=100054418002875" target="_blank" rel="noopener noreferrer" class="py-3 rounded-xl bg-[#1877F2] text-white font-bold text-xs flex items-center justify-center gap-2 text-center">
+                    <i class="fa-brands fa-facebook"></i> Facebook Page
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT DATA & LOGIC -->
+    <script>
+        const menuData = {
+            ciders: [
+                { id: 'c1', name: 'Savanna Cider (6-Pack)', price: 156, desc: 'Dry Apple Cider 6-Pack Bottles', image: 'Savanna.jpeg' },
+                { id: 'c2', name: 'Brutal Fruit (6-Pack)', price: 150, desc: 'Ruby Apple Spritzer 6-Pack Bottles', image: 'Brutal fruit.jpeg' },
+                { id: 'c3', name: 'Bernini (6-Pack)', price: 150, desc: '', image: 'Bernini.png' }
+            ],
+            spirits: [
+                { id: 's1', name: 'Old Buck Gin', price: 185, desc: '750ml Original Dry Gin Bottle', image: 'Old buck.jpeg' },
+                { id: 's2', name: 'Hennessy Cognac', price: 565, desc: '750ml Very Special Cognac Bottle', image: 'Hennesy.jpeg' },
+                { id: 's3', name: "Gordon's London Dry Gin", price: 200, desc: '750ml London Dry Gin Bottle', image: 'Gordons.jpeg' }
+            ],
+            beers: [
+                { id: 'b1', name: 'Carling Black Label (6-Pack)', price: 136, desc: 'Champion Lager 6-Pack Bottles', image: 'Black label.jpeg' },
+                { id: 'b2', name: 'Heineken Lager (6-Pack)', price: 150, desc: 'Premium Lager 6-Pack Bottles', image: 'heineken 2.jpeg' },
+                { id: 'b3', name: 'Corona Extra (6-Pack)', price: 140, desc: '', image: 'Corona.jpeg' },
+                { id: 'q1', name: 'Black Label Quart (750ml)', price: 25, desc: '750ml Glass Quart Bottle', image: 'Black label.jpeg' },
+                { id: 'q2', name: 'Heineken Quart (750ml)', price: 28, desc: '750ml Glass Quart Bottle', image: 'heineken.jpeg' },
+                { id: 'q3', name: 'Castle Lite Quart (750ml)', price: 23, desc: '750ml Glass Quart Bottle', image: 'Castle Lite.jpeg' }
+            ],
+            wine: [
+                { id: 'w1', name: 'Raindance Boxed Wine (5L)', price: 150, desc: '5 Litre Cask Wine', image: 'Bernini.png' },
+                { id: 'w2', name: '4th Street Wine', price: 155, desc: 'Sweet Wine', image: 'Bernini.png' },
+                { id: 'ex1', name: 'Fresh Ice Pack (2kg)', price: 35, desc: '2kg Bag of Chilled Ice Cubes', image: 'ice.jpeg' }
+            ]
+        };
+
+        let cart = [];
+        let currentFulfillment = null;
+
+        window.onload = function() {
+            renderDrinkCategories();
+            document.getElementById('footer-year').innerText = new Date().getFullYear();
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showMessageModal(text) {
+            document.getElementById('message-modal-text').innerText = text;
+            const modal = document.getElementById('message-modal');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+        }
+
+        function hideMessageModal() {
+            const modal = document.getElementById('message-modal');
+            modal.classList.add('pointer-events-none', 'opacity-0');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('cart-toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('translate-y-[-200%]', 'opacity-0');
+            setTimeout(() => {
+                hideToast();
+            }, 4000);
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('cart-toast');
+            toast.classList.add('translate-y-[-200%]', 'opacity-0');
+        }
+
+        function setModalOrderType(type) {
+            currentFulfillment = type;
+            const btnPickup = document.getElementById('modal-opt-pickup');
+            const btnDelivery = document.getElementById('modal-opt-delivery');
+            const delFields = document.getElementById('delivery-fields-container');
+
+            if (type === 'Pickup') {
+                btnPickup.className = "py-2.5 px-3 rounded-xl border border-black bg-black text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs";
+                btnDelivery.className = "py-2.5 px-3 rounded-xl border border-theme-border bg-theme-grayBg text-black text-xs font-bold transition-all flex items-center justify-center gap-2";
+                delFields.classList.add('hidden');
+            } else if (type === 'Delivery') {
+                btnDelivery.className = "py-2.5 px-3 rounded-xl border border-black bg-black text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs";
+                btnPickup.className = "py-2.5 px-3 rounded-xl border border-theme-border bg-theme-grayBg text-black text-xs font-bold transition-all flex items-center justify-center gap-2";
+                delFields.classList.remove('hidden');
+            }
+            updateCartTotals();
+        }
+
+        function renderDrinkCategories() {
+            renderGrid('ciders-container', menuData.ciders);
+            renderGrid('spirits-container', menuData.spirits);
+            renderGrid('beers-container', menuData.beers);
+            renderGrid('wine-container', menuData.wine);
+        }
+
+        function renderGrid(containerId, items) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = items.map(item => {
+                const cartItem = cart.find(ci => ci.id === item.id);
+                const qty = cartItem ? cartItem.qty : 0;
+                
+                return `
+                <div class="menu-item-card bg-white rounded-2xl border border-theme-border hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between" data-name="${item.name.toLowerCase()}">
+                    <div>
+                        <div class="h-40 bg-theme-grayBg relative overflow-hidden">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/000000/06C167?text=Drink'">
+                            <span class="absolute top-3 right-3 bg-black text-white font-black text-xs px-2.5 py-1 rounded-md">R${item.price.toFixed(2)}</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-extrabold text-black text-base">${item.name}</h4>
+                            ${item.desc ? `<p class="text-xs text-theme-textMuted mt-1">${item.desc}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        ${qty === 0 ? `
+                            <button onclick="addSimpleDrinkToCart('${item.id}', '${escapeQuotes(item.name)}', ${item.price}, '${item.image}')" class="w-full py-2.5 rounded-xl bg-theme-grayBg hover:bg-black hover:text-white border border-theme-border text-black font-extrabold text-xs transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus text-theme-green"></i> Add to Cart
+                            </button>
+                        ` : `
+                            <div class="flex items-center justify-between bg-theme-grayBg p-2 rounded-xl border border-theme-border">
+                                <span class="text-xs font-bold text-black pl-2">Quantity:</span>
+                                <div class="flex items-center space-x-2 bg-white px-2 py-1 rounded-lg border border-theme-border">
+                                    <button onclick="changeQty('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center text-black font-bold text-sm hover:bg-theme-grayBg rounded-md">-</button>
+                                    <span class="font-extrabold text-black px-1.5 text-xs">${qty}</span>
+                                    <button onclick="changeQty('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center text-black font-bold text-sm hover:bg-theme-grayBg rounded-md">+</button>
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function escapeQuotes(str) {
+            return str.replace(/'/g, "\\'");
+        }
+
+        function addSimpleDrinkToCart(id, name, price, image) {
+            const existingIndex = cart.findIndex(item => item.id === id);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({ id: id, name: name, price: price, qty: 1, image: image });
+            }
+            updateCartUI();
+            renderDrinkCategories();
+            showToast(`${name} added to cart!`);
+        }
+
+        function changeQty(id, delta) {
+            const index = cart.findIndex(item => item.id === id);
+            if (index > -1) {
+                cart[index].qty += delta;
+                if (cart[index].qty <= 0) {
+                    cart.splice(index, 1);
+                }
+            }
+            updateCartUI();
+            renderDrinkCategories();
+        }
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cart-badge-count').innerText = totalQty;
+            document.getElementById('mob-cart-badge').innerText = totalQty;
+            document.getElementById('cart-review-count').innerText = `${totalQty} item${totalQty === 1 ? '' : 's'}`;
+
+            const container = document.getElementById('cart-items-list');
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-theme-textMuted text-xs">
+                        <i class="fa-solid fa-basket-shopping text-3xl mb-2 text-gray-300 block"></i>
+                        Your cart is empty. Add cold drinks to start!
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="bg-theme-grayBg p-3.5 rounded-2xl border border-theme-border flex items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-3">
+                            ${item.image ? `<img src="${item.image}" class="w-12 h-12 rounded-xl object-cover shrink-0" onerror="this.src='https://placehold.co/100x100/000000/06C167?text=Item'">` : ''}
+                            <div>
+                                <p class="font-extrabold text-black text-xs">${item.name}</p>
+                                ${item.details ? `<p class="text-[10px] text-theme-textMuted mt-0.5">${item.details}</p>` : ''}
+                                <p class="text-theme-darkGreen font-extrabold mt-1">R${(item.price * item.qty).toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-white px-2 py-1 rounded-xl border border-theme-border shrink-0">
+                            <button onclick="changeQty('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center text-black font-bold text-sm hover:bg-theme-grayBg rounded-md">-</button>
+                            <span class="font-extrabold text-black px-1.5 text-xs">${item.qty}</span>
+                            <button onclick="changeQty('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center text-black font-bold text-sm hover:bg-theme-grayBg rounded-md">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            updateCartTotals();
+        }
+
+        function updateCartTotals() {
+            const itemsSubtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            let deliveryFee = 0;
+
+            if (currentFulfillment === 'Delivery') {
+                const areaSelect = document.getElementById('delivery-area-select');
+                const timeSelect = document.getElementById('delivery-time-select');
+                const selectedOpt = areaSelect.options[areaSelect.selectedIndex];
+                const baseFee = parseFloat(selectedOpt.getAttribute('data-fee') || 0);
+                const isLateNight = timeSelect.value.includes('20:00-23:00');
+                const warningEl = document.getElementById('late-night-warning');
+
+                if (isLateNight) {
+                    warningEl.classList.remove('hidden');
+                    deliveryFee = 50;
+                } else {
+                    warningEl.classList.add('hidden');
+                    deliveryFee = baseFee;
+                }
+            }
+
+            const grandTotal = itemsSubtotal + deliveryFee;
+            document.getElementById('summary-subtotal').innerText = `R${itemsSubtotal.toFixed(2)}`;
+            document.getElementById('summary-delivery').innerText = `R${deliveryFee.toFixed(2)}`;
+            document.getElementById('summary-total').innerText = `R${grandTotal.toFixed(2)}`;
+            document.getElementById('mob-cart-total').innerText = `R${grandTotal.toFixed(2)}`;
+        }
+
+        function toggleEftNotice(show) {
+            const box = document.getElementById('eft-disclaimer-box');
+            if (show) box.classList.remove('hidden');
+            else box.classList.add('hidden');
+        }
+
+        function toggleCartModal(open) {
+            const modal = document.getElementById('cart-modal');
+            if (open) {
+                modal.classList.remove('pointer-events-none', 'opacity-0');
+            } else {
+                modal.classList.add('pointer-events-none', 'opacity-0');
+            }
+        }
+
+        function toggleContactModal(open) {
+            const modal = document.getElementById('contact-modal');
+            if (open) modal.classList.remove('pointer-events-none', 'opacity-0');
+            else modal.classList.add('pointer-events-none', 'opacity-0');
+        }
+
+        function handleMenuSearch() {
+            const query = document.getElementById('menu-search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.menu-item-card');
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name') || '';
+                card.style.display = name.includes(query) ? "flex" : "none";
+            });
+        }
+
+        function submitOrderToWhatsApp() {
+            if (cart.length === 0) {
+                showMessageModal("Your cart is empty! Add items before placing an order.");
+                return;
+            }
+
+            if (!currentFulfillment) {
+                showMessageModal("Please select either Pickup (Free) or Delivery before generating your order slip.");
+                return;
+            }
+
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const payMethod = document.querySelector('input[name="pay_method"]:checked').value;
+
+            if (!name || !phone) {
+                showMessageModal("Please fill in your Name and WhatsApp Phone Number.");
+                return;
+            }
+
+            let deliveryArea = '', address = '', timeSlot = '', deliveryFee = 0;
+            if (currentFulfillment === 'Delivery') {
+                const areaSelect = document.getElementById('delivery-area-select');
+                deliveryArea = areaSelect.options[areaSelect.selectedIndex].value;
+                deliveryFee = parseFloat(areaSelect.options[areaSelect.selectedIndex].getAttribute('data-fee') || 0);
+                address = document.getElementById('cust-address').value.trim();
+                timeSlot = document.getElementById('delivery-time-select').value;
+
+                if (!deliveryArea || !address) {
+                    showMessageModal("Please select your delivery area and enter your street address.");
+                    return;
+                }
+                if (timeSlot.includes('20:00-23:00')) deliveryFee = 50;
+            }
+
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const total = subtotal + deliveryFee;
+
+            let slip = `*SMARTS LOUNGE ORDER SLIP*\n\n`;
+            slip += `*Customer:* ${name}\n*Contact:* ${phone}\n*Fulfillment:* ${currentFulfillment.toUpperCase()}\n`;
+            if (currentFulfillment === 'Delivery') {
+                slip += `*Area:* ${deliveryArea}\n*Address:* ${address}\n*Slot:* ${timeSlot}\n`;
+            }
+            slip += `*Payment:* ${payMethod}\n\n*--- ITEMS ---*\n`;
+            cart.forEach((item, i) => {
+                slip += `${i + 1}. *${item.name}* x${item.qty} = R${(item.price * item.qty).toFixed(2)}\n`;
+                if (item.details) slip += `   - _${item.details}_\n`;
+            });
+            slip += `\nSubtotal: R${subtotal.toFixed(2)}\nDelivery: R${deliveryFee.toFixed(2)}\n*TOTAL DUE: R${total.toFixed(2)}*\n\n`;
+            if (payMethod === 'EFT') slip += `*EFT Notice:* Send Proof of Payment via WhatsApp to 0823666451.\n\n`;
+            slip += `Thank you for ordering with Smarts Lounge!`;
+
+            window.open(`https://wa.me/27823666451?text=${encodeURIComponent(slip)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
