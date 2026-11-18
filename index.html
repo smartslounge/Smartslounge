@@ -141,16 +141,16 @@
         </div>
     </header>
 
-    <!-- STORE HERO BANNER -->
+    <!-- STORE HERO BANNER (Responsive full-fit logo for all screens) -->
     <section class="bg-white border-b border-theme-border">
-        <div class="h-52 sm:h-72 lg:h-80 w-full bg-slate-900 relative overflow-hidden">
-            <img src="Smart's Lounge Logo.png" alt="Smarts Lounge Logo" class="w-full h-full object-contain sm:object-cover" onerror="this.src='https://placehold.co/1200x400/000000/06C167?text=Smarts+Lounge'">
-            <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/75 to-transparent pointer-events-none"></div>
+        <div class="w-full bg-black relative overflow-hidden flex items-center justify-center">
+            <img src="Smart's Lounge Logo.png" alt="Smarts Lounge Logo" class="w-full h-auto max-h-[260px] sm:max-h-[340px] lg:max-h-[420px] object-contain mx-auto block" onerror="this.src='https://placehold.co/1200x400/000000/06C167?text=Smarts+Lounge'">
+            <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
             
-            <div class="absolute bottom-3 left-4 right-4 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 text-white flex justify-between items-end pointer-events-none">
+            <div class="absolute bottom-2.5 left-4 right-4 max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 text-white flex justify-between items-end pointer-events-none">
                 <div>
-                    <h1 class="text-base sm:text-xl font-black tracking-tight">Smarts Lounge</h1>
-                    <p class="text-[11px] sm:text-xs text-gray-200">Ice Cold Beers, Ciders, Spirits, Wine & Pool</p>
+                    <h1 class="text-sm sm:text-xl font-black tracking-tight">Smarts Lounge</h1>
+                    <p class="text-[10px] sm:text-xs text-gray-200">Ice Cold Beers, Ciders, Spirits, Wine & Pool</p>
                 </div>
             </div>
         </div>
@@ -290,31 +290,41 @@
             </div>
         </section>
 
-        <!-- CATEGORY 6: GALLERY SECTION (1.jpg to 6.jpg) -->
+        <!-- CATEGORY 6: SINGLE-CARD LOUNGE GALLERY FILTER/VIEWER (1.jpg to 6.jpg) -->
         <section id="cat-gallery" class="scroll-mt-24">
-            <div class="border-b border-theme-border pb-3 mb-6">
-                <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
-                    <i class="fa-solid fa-camera text-theme-green"></i> Lounge Gallery
-                </h2>
+            <div class="flex items-center justify-between border-b border-theme-border pb-3 mb-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-black flex items-center gap-2">
+                        <i class="fa-solid fa-camera text-theme-green"></i> Lounge Gallery
+                    </h2>
+                    <p class="text-xs text-theme-textMuted mt-0.5">Browse photos from Smarts Lounge (1 to 6)</p>
+                </div>
+                <span id="gallery-counter" class="text-xs font-extrabold bg-black text-white px-3 py-1 rounded-full">1 / 6</span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="1.jpg" alt="Gallery 1" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=1.jpg'">
+
+            <div class="max-w-3xl mx-auto">
+                <div class="relative bg-black rounded-3xl overflow-hidden border border-theme-border shadow-lg aspect-[4/3] sm:aspect-[16/10] flex items-center justify-center">
+                    <img id="gallery-main-img" src="1.jpg" alt="Smarts Lounge Gallery 1" class="w-full h-full object-contain transition-all duration-300" onerror="this.src='https://placehold.co/800x500/000000/06C167?text=1.jpg'">
+
+                    <!-- Previous Button -->
+                    <button onclick="changeGallerySlide(-1)" aria-label="Previous photo" class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-theme-green text-black flex items-center justify-center shadow-lg transition-all">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+
+                    <!-- Next Button -->
+                    <button onclick="changeGallerySlide(1)" aria-label="Next photo" class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-theme-green text-black flex items-center justify-center shadow-lg transition-all">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
                 </div>
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="2.jpg" alt="Gallery 2" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=2.jpg'">
-                </div>
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="3.jpg" alt="Gallery 3" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=3.jpg'">
-                </div>
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="4.jpg" alt="Gallery 4" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=4.jpg'">
-                </div>
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="5.jpg" alt="Gallery 5" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=5.jpg'">
-                </div>
-                <div class="h-64 sm:h-72 bg-theme-grayBg rounded-2xl overflow-hidden border border-theme-border shadow-xs">
-                    <img src="6.jpg" alt="Gallery 6" class="w-full h-full object-cover hover:scale-105 transition-all duration-300" onerror="this.src='https://placehold.co/600x600/000000/06C167?text=6.jpg'">
+
+                <!-- Photo Number Filter Pills (1 - 6) -->
+                <div class="flex items-center justify-center gap-2 mt-4 flex-wrap" id="gallery-filter-pills">
+                    <button onclick="setGallerySlide(0)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-black bg-black text-white transition-all">1</button>
+                    <button onclick="setGallerySlide(1)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all">2</button>
+                    <button onclick="setGallerySlide(2)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all">3</button>
+                    <button onclick="setGallerySlide(3)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all">4</button>
+                    <button onclick="setGallerySlide(4)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all">5</button>
+                    <button onclick="setGallerySlide(5)" class="gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all">6</button>
                 </div>
             </div>
         </section>
@@ -560,6 +570,9 @@
             ]
         };
 
+        const galleryImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg'];
+        let currentGalleryIndex = 0;
+
         let cart = [];
         let currentFulfillment = null;
 
@@ -567,6 +580,32 @@
             renderDrinkCategories();
             document.getElementById('footer-year').innerText = new Date().getFullYear();
         };
+
+        function setGallerySlide(index) {
+            currentGalleryIndex = (index + galleryImages.length) % galleryImages.length;
+            const imgFile = galleryImages[currentGalleryIndex];
+            const mainImg = document.getElementById('gallery-main-img');
+            mainImg.src = imgFile;
+            mainImg.alt = `Smarts Lounge Gallery ${currentGalleryIndex + 1}`;
+            mainImg.onerror = function() {
+                this.src = `https://placehold.co/800x500/000000/06C167?text=${imgFile}`;
+            };
+
+            document.getElementById('gallery-counter').innerText = `${currentGalleryIndex + 1} / ${galleryImages.length}`;
+
+            const pills = document.querySelectorAll('.gallery-pill');
+            pills.forEach((pill, i) => {
+                if (i === currentGalleryIndex) {
+                    pill.className = 'gallery-pill px-3.5 py-1.5 rounded-full text-xs font-black bg-black text-white transition-all';
+                } else {
+                    pill.className = 'gallery-pill px-3.5 py-1.5 rounded-full text-xs font-bold bg-theme-grayBg text-black hover:bg-theme-lightGray transition-all';
+                }
+            });
+        }
+
+        function changeGallerySlide(delta) {
+            setGallerySlide(currentGalleryIndex + delta);
+        }
 
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
